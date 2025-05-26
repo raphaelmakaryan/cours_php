@@ -1,4 +1,6 @@
-Écrire les requêtes de sélection sur une table
+# Iteration 3
+
+## Écrire les requêtes de sélection sur une table
 
 1. Lister l’ensemble des films. -> SELECT * FROM `films`
 2. Liste des films plus long que 2 heures -> SELECT * FROM `films` WHERE duree >= 2;
@@ -6,7 +8,7 @@
 4. Liste des séances sur les 10 derniers jours
 
 
-Créer les différentes tables de la base de données
+## Créer les différentes tables de la base de données
 
 1. Liste des films avec Harrison Ford dans son casting 
 -> SELECT *  FROM `casting` 
@@ -35,7 +37,7 @@ SELECT cinema.nom, salles.nom, acteurs.identite FROM `seances` INNER JOIN castin
 7. Budget total de tous les films par année de sortie
 -> SELECT Sum(films.budget) as "Budget", films.annee FROM `films` GROUP by films.annee;
 
-Insertion, mise à jour et suppression
+## Insertion, mise à jour et suppression
 1. Créer un film avec au moins trois projections pour le mois prochain
 
 2. Ajouter un cinéma et ses salles
@@ -59,7 +61,7 @@ Insertion, mise à jour et suppression
 (recuperer les seances qu'ils ont un film : SELECT * FROM `seances` WHERE `idFilm` IS NOT NULL)
 
 
-Pour aller plus loin (optionnel)
+## Pour aller plus loin (optionnel)
 1. Liste de tous les films qui passent aujourd’hui
 -> SELECT * FROM `seances` WHERE `date` = CURDATE();
 
@@ -67,3 +69,27 @@ Pour aller plus loin (optionnel)
 -> 
 3. Liste de tous les films ne contenant pas Harrison Ford
 4. Liste des cinéma qui passent tous les films
+
+<br>
+
+# Iteration 4
+
+## NoSQL, Quésako ?
+NoSQL est un non relationnel, auquel il aborde une structure document en json (objet), avec un schema dynamique, il est pas ACID (atomicité, cohérence, isolation et durabilité), avec aucune jointure donc pas de clée etrangere, utile pour une performance de donnée non structuré.
+Il est surtout utilisé par Mongodb.
+
+## Écrivez dans Compass les requêtes suivantes :
+*Les commandes sont faite dans le shell de Mongo compass*
+
+Récupérer les informations le film dont l nom est Star wars : 
+->  db.collectionName.find({"nom" : "Star Wars"})
+
+Récupérer tous les films dont la durée est supérieure à deux heures
+-> db.films.find({"duree" : {$gt:2}})
+
+Récupérer le titre des films dont le budget dépasse les 30 millions
+-> db.films.find({"budget" : {$gt: 30}}, {"nom" : true}).pretty()
+
+
+Récupérer les cinémas avec au moins une salle ayant plus de 300 places
+-> db.cinemav2.find({"salles" ; {$gt : 300}})
