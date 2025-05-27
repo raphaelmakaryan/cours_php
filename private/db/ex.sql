@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le : lun. 26 mai 2025 à 15:58
+-- Généré le : mar. 27 mai 2025 à 15:30
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -20,6 +20,19 @@ SET time_zone = "+00:00";
 --
 -- Base de données : `iteration2`
 --
+
+DELIMITER $$
+--
+-- Procédures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ajouter_seances` (IN `idFIlm` INT, IN `idCinema` INT, IN `idSalle` INT, IN `laDate` DATE, IN `heure` INT)   BEGIN
+    DECLARE trouve_seance INT;
+    SELECT COUNT(*) INTO trouve_seance FROM seances WHERE idSalle = idSalle AND idFilm = idFilm;
+     SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = trouve_seance;
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -191,7 +204,7 @@ CREATE TABLE `seances` (
   `idFilm` int(11) NOT NULL,
   `idCinema` int(11) NOT NULL,
   `idSalle` int(11) NOT NULL,
-  `date` date NOT NULL,
+  `laDate` date NOT NULL,
   `heure` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -199,7 +212,7 @@ CREATE TABLE `seances` (
 -- Déchargement des données de la table `seances`
 --
 
-INSERT INTO `seances` (`ID`, `idFilm`, `idCinema`, `idSalle`, `date`, `heure`) VALUES
+INSERT INTO `seances` (`ID`, `idFilm`, `idCinema`, `idSalle`, `laDate`, `heure`) VALUES
 (1, 3, 1, 5, '2023-12-09', 18),
 (2, 2, 1, 4, '2023-12-27', 20),
 (3, 2, 3, 10, '2023-12-02', 20),
@@ -229,7 +242,8 @@ INSERT INTO `seances` (`ID`, `idFilm`, `idCinema`, `idSalle`, `date`, `heure`) V
 (27, 8, 1, 1, '2025-06-30', 18),
 (28, 8, 2, 1, '2025-06-26', 18),
 (29, 8, 3, 1, '2025-06-27', 18),
-(30, 2, 1, 1, '2025-05-26', 18);
+(30, 2, 1, 1, '2025-05-26', 18),
+(31, 2, 1, 3, '2025-05-27', 18);
 
 --
 -- Index pour les tables déchargées
@@ -315,7 +329,7 @@ ALTER TABLE `salles`
 -- AUTO_INCREMENT pour la table `seances`
 --
 ALTER TABLE `seances`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- Contraintes pour les tables déchargées
