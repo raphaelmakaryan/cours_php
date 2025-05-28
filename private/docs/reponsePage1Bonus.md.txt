@@ -1,0 +1,20 @@
+BEGIN
+  IF EXISTS (SELECT * FROM salles WHERE idCinema = cinema AND ID = salle) THEN
+    IF EXISTS (SELECT * FROM seances WHERE idSalle = salle AND idFilm = film AND laDate = dateFilm) THEN
+          SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = "Il existe déjà une séance pour ce film et cette salle à cette date !";
+    ELSE 
+      INSERT INTO seances (ID, idFilm, idCinema, idSalle, laDate, heure) VALUES (NULL, film, cinema, salle, dateFilm, heure);
+    END IF;
+  ELSE
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = "La salle n'est pas dans le cinéma que vous avez déclaré !";
+  END IF;
+END
+
+BEGIN
+  IF EXISTS (SELECT * FROM seances WHERE idFilm = OLD.ID AND laDate >= DATE_FORMAT(NOW(), '%Y-%m-%d')) THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Il existe une/des séances pour ce film avec une date ultérieure ou égale à aujourd’hui !';
+  END IF;
+END

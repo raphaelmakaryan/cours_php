@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le : mar. 27 mai 2025 à 15:30
+-- Généré le : mer. 28 mai 2025 à 11:45
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -25,11 +25,18 @@ DELIMITER $$
 --
 -- Procédures
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `ajouter_seances` (IN `idFIlm` INT, IN `idCinema` INT, IN `idSalle` INT, IN `laDate` DATE, IN `heure` INT)   BEGIN
-    DECLARE trouve_seance INT;
-    SELECT COUNT(*) INTO trouve_seance FROM seances WHERE idSalle = idSalle AND idFilm = idFilm;
-     SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = trouve_seance;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ajouter_seances` (IN `film` INT(100), IN `cinema` INT(100), IN `salle` INT(100), IN `dateFilm` DATE, IN `heure` INT(100))   BEGIN
+  IF EXISTS (SELECT * FROM salles WHERE idCinema = cinema AND ID = salle) THEN
+    IF EXISTS (SELECT * FROM seances WHERE idSalle = salle AND idFilm = film AND laDate = dateFilm) THEN
+          SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = "Il existe déjà une séance pour ce film et cette salle à cette date !";
+    ELSE 
+      INSERT INTO seances (ID, idFilm, idCinema, idSalle, laDate, heure) VALUES (NULL, film, cinema, salle, dateFilm, heure);
+    END IF;
+  ELSE
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = "La salle n'est pas dans le cinéma que vous avez déclaré !";
+  END IF;
 END$$
 
 DELIMITER ;
@@ -160,7 +167,20 @@ INSERT INTO `films` (`ID`, `nom`, `annee`, `type`, `budget`, `duree`) VALUES
 (4, 'Le cinquième élément', '1997', 'action', 75, 2.06),
 (5, 'Apocalypse Now', '1979', 'guerre', 31, 2.33),
 (6, 'La cité de la peur', '1994', 'comédie', 7.5, 1.33),
-(8, 'One Piece RED', '2022', 'action', 21, 1.55);
+(7, 'One Piece RED', '2022', 'action', 21, 1.55);
+
+--
+-- Déclencheurs `films`
+--
+DELIMITER $$
+CREATE TRIGGER `filmStillShowing` BEFORE DELETE ON `films` FOR EACH ROW BEGIN
+  IF EXISTS (SELECT * FROM seances WHERE idFilm = OLD.ID AND laDate >= DATE_FORMAT(NOW(), '%Y-%m-%d')) THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Il existe une/des séances pour ce film avec une date ultérieure ou égale à aujourd’hui !';
+  END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -239,11 +259,10 @@ INSERT INTO `seances` (`ID`, `idFilm`, `idCinema`, `idSalle`, `laDate`, `heure`)
 (24, 1, 2, 7, '2023-12-21', 22),
 (25, 1, 1, 4, '2023-12-22', 18),
 (26, 6, 2, 7, '2023-12-02', 22),
-(27, 8, 1, 1, '2025-06-30', 18),
-(28, 8, 2, 1, '2025-06-26', 18),
-(29, 8, 3, 1, '2025-06-27', 18),
 (30, 2, 1, 1, '2025-05-26', 18),
-(31, 2, 1, 3, '2025-05-27', 18);
+(31, 2, 1, 3, '2025-05-27', 18),
+(32, 2, 1, 1, '2025-05-28', 10),
+(34, 7, 1, 1, '2025-05-28', 18);
 
 --
 -- Index pour les tables déchargées
@@ -329,7 +348,7 @@ ALTER TABLE `salles`
 -- AUTO_INCREMENT pour la table `seances`
 --
 ALTER TABLE `seances`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- Contraintes pour les tables déchargées
