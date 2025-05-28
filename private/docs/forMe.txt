@@ -8,3 +8,12 @@ A faire pour lancer XAMPP sur Ubuntu
 
 A faire pour lancer le server php en local
 - php -S localhost:8000
+
+Minikube : 
+- minikube start
+- minikube status    
+- ? (kubectl create deployment hello-minikube --image=registry.k8s.io/echoserver:1.10    )
+- kubectl create deployment hello-minikube --image=registry.k8s.io/echoserver:1.10    
+- kubectl create deployment hello-minikube --image=registry.k8s.io/echoserver:1.10    
+- minikube dashboard
+-> https://kubernetes.io/docs/tutorials/hello-minikube/
