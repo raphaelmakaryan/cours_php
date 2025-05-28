@@ -30,6 +30,9 @@ switch (true) {
     case $request === '/logout':
         include './private/pages/logout.php';
         break;
+    case $request === '/votes':
+        include './private/pages/votes.php';
+        break;
     default:
         if (strpos($request, '/edit') === 0 && isset($_GET['id'])) {
             include './private/pages/edit.php';

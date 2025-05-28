@@ -1,0 +1,2 @@
+INT : 16,0	kio
+verchar : 16,0	kio
