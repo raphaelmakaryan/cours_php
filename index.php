@@ -40,6 +40,8 @@ switch (true) {
             include './private/pages/article.php';
         } else if (strpos($request, '/delete') === 0 && isset($_GET['id'])) {
             include './private/pages/delete.php';
+        } else if (strpos($request, '/votes') === 0 && isset($_GET['jeu_id'])) {
+            include './private/pages/votes.php';
         } else {
             include './private/pages/notfound.php';
         }

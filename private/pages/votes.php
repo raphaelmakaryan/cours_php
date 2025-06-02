@@ -1,12 +1,35 @@
 <?php
 $connection = new mysqli("localhost", "root", "", "exercicebonus2");
 $data = [];
+$retourValeur = "";
+
+include("private/functions/apiVoteAll.php");
 
 if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
 } else {
     $requeteUser = mysqli_query($connection, "SELECT * FROM notes");
     $data = mysqli_fetch_all($requeteUser, MYSQLI_ASSOC);
+}
+
+if ($_POST) {
+    $jeu_id = $_POST['jeu_id'];
+    $fun = $_POST['fun'];
+    $graph = $_POST['graph'];
+    $user = $_POST['user'];
+    $durée = $_POST['duree'];
+    $gameId = verifGame($jeu_id);
+    echo $gameId;
+
+    /*
+
+    $allBareme = verifBareme($fun, $graph, $durée);
+    $thisUser = verifUser($user);
+
+    if ($gameId != false && $allBareme != false && $thisUser != false) {
+        $newNote = verifNote($allBareme);
+        echo $newNote;
+    }*/
 }
 
 ?>
@@ -39,6 +62,37 @@ if ($connection->connect_error) {
                     }
                     ?>
                 </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-12">
+                    <p class="fs-1 text-center">Voter un jeu</p>
+                </div>
+                <span><?php echo $retourValeur ?></span>
+                <form action="votes" method="post">
+                    <div class="col-12 mt-3 d-flex flex-column align-items-center">
+                        <label for="jeu_id" class="form-label">GameID</label>
+                        <input type="number" class="form-control w-25" name="jeu_id" id="jeu_id" required>
+                    </div>
+                    <div class="col-12 mt-3 d-flex flex-column align-items-center">
+                        <label for="fun" class="form-label">Fun</label>
+                        <input type="number" class="form-control w-25" name="fun" id="fun" required>
+                    </div>
+                    <div class="col-12 mt-3 d-flex flex-column align-items-center">
+                        <label for="graph" class="form-label">Graph</label>
+                        <input type="number" class="form-control w-25" name="graph" id="graph" required>
+                    </div>
+                    <div class="col-12 mt-3 d-flex flex-column align-items-center">
+                        <label for="duree" class="form-label">Duree</label>
+                        <input type="number" class="form-control w-25" name="duree" id="duree" required>
+                    </div>
+                    <div class="col-12 mt-3 d-flex flex-column align-items-center">
+                        <label for="user" class="form-label">User</label>
+                        <input type="text" class="form-control w-25" name="user" id="user" required>
+                    </div>
+                    <div class="col-12 mt-3 d-flex flex-column align-items-center">
+                        <button type="submit" class="btn btn-primary">Envoyez</button>
+                    </div>
+                </form>
             </div>
         </div>
     </section>
