@@ -1,4 +1,13 @@
 <?php
+
+$connection = new mysqli("localhost", "root", "", "exercicebonus2");
+$data = [];
+
+if ($connection->connect_error) {
+    die("Connection failed: " . $connection->connect_error);
+}
+
+
 $users = [["user" => "alice", "pass" => "1234", "id" => 0, "role" => "admin"], ["user" => "brigitte", "pass" => "5678", "id" => 1, "role" => "author"]];
 
 function numberStringLength($mot)
@@ -42,7 +51,6 @@ function verifToken($session)
     }
     return false;
 }
-
 function deleteArticles($data)
 {
     global $folder;
@@ -67,6 +75,33 @@ function deleteArticles($data)
                 $updateArticle[] = $newArticle;
             }
             file_put_contents($folder, json_encode($updateArticle, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        }
+    }
+}
+
+function haveUser($idUser)
+{
+
+    if ($idUser) {
+        global $connection;
+        $requeteUser = mysqli_query($connection, "SELECT * FROM `viewers` WHERE `ID` = " . $idUser . "");
+        $dataUser = mysqli_fetch_all($requeteUser, MYSQLI_ASSOC);
+
+        if ($dataUser) {
+            return $dataUser[0]["nom"];
+        }
+    }
+}
+
+function haveGame($idGame)
+{
+    if ($idGame) {
+        global $connection;
+        $requeteUser = mysqli_query($connection, "SELECT `name`, `image` FROM `jeux` WHERE `jeux_id` = " . $idGame . "");
+        $dataGame = mysqli_fetch_all($requeteUser, MYSQLI_ASSOC);
+
+        if ($dataGame) {
+            return $dataGame[0];
         }
     }
 }

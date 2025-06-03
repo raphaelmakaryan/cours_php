@@ -1,9 +1,13 @@
 <?php
+
+use function PHPSTORM_META\type;
+
 $connection = new mysqli("localhost", "root", "", "exercicebonus2");
 $data = [];
 $retourValeur = "";
 
 include("private/functions/apiVoteAll.php");
+include("private/functions/tools.php");
 
 if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
@@ -19,17 +23,12 @@ if ($_POST) {
     $user = $_POST['user'];
     $durée = $_POST['duree'];
     $gameId = verifGame($jeu_id);
-    echo $gameId;
-
-    /*
-
     $allBareme = verifBareme($fun, $graph, $durée);
     $thisUser = verifUser($user);
-
     if ($gameId != false && $allBareme != false && $thisUser != false) {
         $newNote = verifNote($allBareme);
-        echo $newNote;
-    }*/
+        insertVote($thisUser, $newNote, $gameId);
+    }
 }
 
 ?>
@@ -55,13 +54,33 @@ if ($_POST) {
                 <div class="col-12">
                     <p class="fs-1 text-center">Votes actuel :</p>
                 </div>
-                <div class="col-12 mt-3">
-                    <?php
-                    foreach ($data as $value) {
-                        echo $value["name"];
-                    }
-                    ?>
-                </div>
+                <?php
+                foreach ($data as $value) {
+                    $user = haveUser($value["idUser"]);
+                    $game = haveGame($value["jeu_id"]);
+                    $note = $value["valeur"];
+                    echo '<div class="col-12 mt-3">';
+                    echo "<div class='container-fluid'>";
+                    echo "<div class='row radius border d-flex flex-row justify-content-center'>";
+
+                    echo '<div class="col-2 d-flex flex-column align-items-center">';
+                    echo '<img src="' . $game["image"] . '" class="img-fluid w-50">';
+                    echo '</div>';
+                    echo '<div class="col-2 d-flex flex-column align-items-center">';
+                    echo '<p class="fs-6">Nom du jeu : ' . $game["name"] . '</p>';
+                    echo '</div>';
+                    echo '<div class="col-2 d-flex flex-column align-items-center">';
+                    echo '<p class="fs-6">Nom du user : ' . $user . '</p>';
+                    echo '</div>';
+                    echo '<div class="col-2 d-flex flex-column align-items-center">';
+                    echo '<p class="fs-6">Note : ' . $note . '/20</p>';
+                    echo '</div>';
+
+                    echo '</div>';
+                    echo '</div>';
+                    echo '</div>';
+                }
+                ?>
             </div>
             <div class="row mt-5">
                 <div class="col-12">
